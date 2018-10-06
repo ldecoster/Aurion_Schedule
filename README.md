@@ -1,2 +1,9 @@
 # Aurion_Schedule
-Script made with PhantomJS in purpose to extract schedule from ISEN's aurion website
+
+## Description
+
+-Coming soon-
+
+## How to use 
+
+You need to install phantomjs. Then, just launch this command : `phantomjs main.js yourUsername yourPassword`
