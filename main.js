@@ -48,14 +48,12 @@
 
 	var aurionExtractData = function() {
 		console.log('Step 4 - Extract data from the schedule page');
-		var cookie = page.cookies[0].value;
-		var result = page.evaluate(function(cookie) {
+		var result = page.evaluate(function() {
 			var schedule = document.getElementsByClassName('schedule')[0].getAttribute('id');
 			var viewState = document.getElementsByName('javax.faces.ViewState')[0].getAttribute('value');
-			var useful_data = "schedule : "+schedule+"\nviewState : "+viewState+"\ncookie : "+cookie;
-			var useful_data = [schedule, viewState, cookie];
+			var useful_data = [schedule, viewState];
 			return useful_data;
-		}, cookie);
+		});
 		aurionGetDate(result);
 	};
 
@@ -63,8 +61,8 @@
 		console.log('Step 5 - Get json data for the week/month from the schedule page');
 		var formId = scheduleArgs[0];
 		var viewState = scheduleArgs[1];
-		var start = (+ new Date(2018,9,1));
-		var end = (+ new Date(2018,9,7));
+		var start = (+ new Date(2018,9,15));
+		var end = (+ new Date(2018,9,21));
 		var postBody = 'javax.faces.partial.ajax=true'
 		+'&javax.faces.source='+formId
 		+'&javax.faces.partial.execute='+formId
@@ -79,13 +77,14 @@
 		page.open('https://aurion-lille.yncrea.fr/faces/Planning.xhtml', 'POST', postBody, function(status) {
 			var parser = new DOMParser();
 			var xmlDoc = parser.parseFromString(page.content,"text/xml");
-			data = xmlDoc.getElementById('form:j_idt121').innerHTML;
+			data = xmlDoc.getElementById('form:j_idt121').textContent;
 			jsonData = data.replace("<![CDATA[", "").replace("]]>", "");
 			jsonData = JSON.stringify(JSON.parse(jsonData), null, '\t'); // just for indent the JSON
 			var fs = require('fs');
 			fs.write('response.json', jsonData, 'w');
 			console.log("Test complete");
 		});
+
 
 		page.onLoadFinished = function() {
 			phantom.exit();
