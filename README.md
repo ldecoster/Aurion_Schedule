@@ -6,4 +6,8 @@
 
 ## How to use 
 
-You need to install phantomjs. Then, just launch this command : `phantomjs main.js yourUsername yourPassword`
+Once you're in the folder, type this command : `libs/phantomjs main.js yourUsername yourPassword startingDate endingDate`. Then, wait a bit (~5-10sec) to let the script running.
+
+## Caution
+
+At the moment, there is no error handling !
