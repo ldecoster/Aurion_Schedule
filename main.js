@@ -1,5 +1,7 @@
 (function() {
-
+	/*
+	**	Settings
+	*/
 	var webPage = require('webpage');
 	var system = require('system');
 	var args = system.args;
@@ -12,6 +14,21 @@
 	console.log('All settings loaded, start with execution');
 
 
+	/*
+	**	Regular JS function
+	*/
+	var convertDate = function(dateString) {
+		var dateSplit = dateString.split('-');
+		var dateObj = new Date();
+		dateObj.setFullYear(dateSplit[0], dateSplit[1]-1, dateSplit[2]); // js month start from 0 to 11
+		dateObj.setHours(0, 0, 0, 0);
+		return (+ dateObj); // return the date in timestamp
+	};
+
+
+	/*
+	**	PhantomJS functions
+	*/
 	var aurionHomePageAccess = function(){
 		console.log('Step 1 - Open Aurion home page');
 		page.open("https://aurion-lille.yncrea.fr", function(status){});
@@ -61,8 +78,8 @@
 		console.log('Step 5 - Get json data for the week/month from the schedule page');
 		var formId = scheduleArgs[0];
 		var viewState = scheduleArgs[1];
-		var start = (+ new Date(2018,9,15));
-		var end = (+ new Date(2018,9,21));
+		var start = convertDate(args[3]);
+		var end = convertDate(args[4]);
 		var postBody = 'javax.faces.partial.ajax=true'
 		+'&javax.faces.source='+formId
 		+'&javax.faces.partial.execute='+formId
