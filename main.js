@@ -31,7 +31,12 @@
 	*/
 	var aurionHomePageAccess = function(){
 		console.log('Step 1 - Open Aurion home page');
-		page.open("https://aurion-lille.yncrea.fr", function(status){});
+		page.open("https://aurion-lille.yncrea.fr", function(status){
+			if(status !== 'success') {
+				console.log('Erreur : Impossible d\'accéder à Aurion');
+				phantom.exit();
+			}
+		});
 		page.onLoadFinished = function() {
 			aurionConnection();
 		};
@@ -45,7 +50,12 @@
 			document.getElementById("formulaireSpring").submit();
 		}, args);
 		page.onLoadFinished = function() {
-			aurionScheduleAccess();
+			if(page.url === 'https://aurion-lille.yncrea.fr/erreur.html') {
+				console.log('Erreur : login/mdp incorrect');
+				phantom.exit();
+			} else {
+				aurionScheduleAccess();
+			}
 		};
 	};
 
@@ -56,10 +66,15 @@
 			scheduleButton.click(); 
 		});
 		page.onLoadFinished = function() {
-			// Wait of 1ms
-			window.setTimeout(function() {
-				aurionExtractData();
-			}, 1);
+			if(page.url !== 'https://aurion-lille.yncrea.fr/faces/Planning.xhtml') {
+				console.log('Erreur : Impossible d\'accéder au planning');
+				phantom.exit();
+			} else {
+				// Wait of 1ms
+				window.setTimeout(function() {
+					aurionExtractData();
+				}, 1);
+			}
 		};
 	};
 
@@ -99,13 +114,18 @@
 			var data = xmlDoc.getElementById('form:j_idt121').textContent;
 			jsonData = data.replace("<![CDATA[", "").replace("]]>", "");
 			jsonData = JSON.stringify(JSON.parse(jsonData), null, '\t'); // just for indent the JSON
-			var fs = require('fs');
-			fs.write('response.json', jsonData, 'w');
-			console.log("Test complete");
 		});
 
 		page.onLoadFinished = function() {
-			phantom.exit();
+			if(!jsonData || jsonData === "") {
+				console.log('Erreur : Données de retour vide (problème de dates ?)');
+				phantom.exit();
+			} else {
+				var fs = require('fs');
+				fs.write('response.json', jsonData, 'w');
+				console.log("Test complete");
+				phantom.exit();
+			}
 		};
 	};
 
