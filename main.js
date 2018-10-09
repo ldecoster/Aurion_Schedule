@@ -71,10 +71,10 @@
 			var useful_data = [schedule, viewState];
 			return useful_data;
 		});
-		aurionGetDate(result);
+		aurionGetData(result);
 	};
 
-	var aurionGetDate = function(scheduleArgs) {
+	var aurionGetData = function(scheduleArgs) {
 		console.log('Step 5 - Get json data for the week/month from the schedule page');
 		var formId = scheduleArgs[0];
 		var viewState = scheduleArgs[1];
@@ -91,17 +91,18 @@
 		+'&form=form&form:largeurDivCenter=1606&form:offsetFuseauNavigateur=-7200000'
 		+'&form:onglets_activeIndex=0&onglets_scrollState=0&javax.faces.ViewState='+viewState;
 
+		var jsonData;
+
 		page.open('https://aurion-lille.yncrea.fr/faces/Planning.xhtml', 'POST', postBody, function(status) {
 			var parser = new DOMParser();
 			var xmlDoc = parser.parseFromString(page.content,"text/xml");
-			data = xmlDoc.getElementById('form:j_idt121').textContent;
+			var data = xmlDoc.getElementById('form:j_idt121').textContent;
 			jsonData = data.replace("<![CDATA[", "").replace("]]>", "");
 			jsonData = JSON.stringify(JSON.parse(jsonData), null, '\t'); // just for indent the JSON
 			var fs = require('fs');
 			fs.write('response.json', jsonData, 'w');
 			console.log("Test complete");
 		});
-
 
 		page.onLoadFinished = function() {
 			phantom.exit();
