@@ -56,10 +56,10 @@
 			scheduleButton.click(); 
 		});
 		page.onLoadFinished = function() {
-			// Wait of 5s to allow the page to be fully loaded
+			// Wait of 1ms
 			window.setTimeout(function() {
 				aurionExtractData();
-			}, 5000);
+			}, 1);
 		};
 	};
 
