@@ -20,11 +20,24 @@
 	var convertDate = function(dateString) {
 		var dateSplit = dateString.split('-');
 		var dateObj = new Date();
-		dateObj.setFullYear(dateSplit[0], dateSplit[1]-1, dateSplit[2]); // js month start from 0 to 11
+		dateObj.setFullYear(parseInt(dateSplit[0]), parseInt(dateSplit[1])-1, parseInt(dateSplit[2])); // js month start from 0 to 11
 		dateObj.setHours(0, 0, 0, 0);
 		return (+ dateObj); // return the date in timestamp
 	};
 
+	var getMonday = function(d) {
+		d = new Date(d);
+		var day = d.getDay();
+		var diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+		return +(new Date(d.setDate(diff))); // return the date in timestamp
+	}
+
+	var getSaturdayFromMonday = function(d) {
+		d = new Date(d);
+		var day = d.getDay();
+		var diff = d.getDate() + 6;
+		return +(new Date(d.setDate(diff))); // return the date in timestamp
+	}
 
 	/*
 	**	PhantomJS functions
@@ -90,11 +103,12 @@
 	};
 
 	var aurionGetData = function(scheduleArgs) {
-		console.log('Step 5 - Get json data for the week/month from the schedule page');
+		console.log('Step 5 - Get json data for the week from the schedule page');
 		var formId = scheduleArgs[0];
 		var viewState = scheduleArgs[1];
-		var start = convertDate(args[3]);
-		var end = convertDate(args[4]);
+		var date = args[3];
+		var start = getMonday(date);
+		var end = getSaturdayFromMonday(start);
 		var postBody = 'javax.faces.partial.ajax=true'
 		+'&javax.faces.source='+formId
 		+'&javax.faces.partial.execute='+formId
