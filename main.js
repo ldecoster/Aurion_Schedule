@@ -29,14 +29,18 @@
 		d = new Date(d);
 		var day = d.getDay();
 		var diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-		return +(new Date(d.setDate(diff))); // return the date in timestamp
+		var returnDate = new Date(d.setDate(diff));
+		returnDate.setHours(0, 0, 0, 0);
+		return +(returnDate); // return the date in timestamp
 	}
 
-	var getSaturdayFromMonday = function(d) {
+	var getSundayFromMonday = function(d) {
 		d = new Date(d);
 		var day = d.getDay();
 		var diff = d.getDate() + 6;
-		return +(new Date(d.setDate(diff))); // return the date in timestamp
+		var returnDate = new Date(d.setDate(diff));
+		returnDate.setHours(0, 0, 0, 0);
+		return +(returnDate); // return the date in timestamp
 	}
 
 	/*
@@ -108,14 +112,14 @@
 		var viewState = scheduleArgs[1];
 		var date = args[3];
 		var start = getMonday(date);
-		var end = getSaturdayFromMonday(start);
+		var end = getSundayFromMonday(start);
 		var postBody = 'javax.faces.partial.ajax=true'
 		+'&javax.faces.source='+formId
 		+'&javax.faces.partial.execute='+formId
 		+'&javax.faces.partial.render='+formId
 		+'&'+formId+'='+formId
-		+'&'+formId+'_start='+start
 		+'&'+formId+'_end='+end
+		+'&'+formId+'_start='+start
 		+'&'+formId+'_view=agendaWeek'
 		+'&form=form&form:largeurDivCenter=1606&form:offsetFuseauNavigateur=-7200000'
 		+'&form:onglets_activeIndex=0&onglets_scrollState=0&javax.faces.ViewState='+viewState;
@@ -126,8 +130,10 @@
 			var parser = new DOMParser();
 			var xmlDoc = parser.parseFromString(page.content,"text/xml");
 			var data = xmlDoc.getElementById('form:j_idt121').textContent;
-			jsonData = data.replace("<![CDATA[", "").replace("]]>", "");
-			jsonData = JSON.stringify(JSON.parse(jsonData), null, '\t'); // just for indent the JSON
+			jsonData = data.replace("<![CDATA[", "").replace("]]>", ""); // JSON
+			jsonData = JSON.parse(jsonData); // JS Object
+			jsonData['settings'] = {"start" : start, "end": end};
+			jsonData = JSON.stringify(jsonData, null, '\t'); // JSON indented
 		});
 
 		page.onLoadFinished = function() {
