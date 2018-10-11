@@ -132,7 +132,7 @@
 			var data = xmlDoc.getElementById('form:j_idt121').textContent;
 			jsonData = data.replace("<![CDATA[", "").replace("]]>", ""); // JSON
 			jsonData = JSON.parse(jsonData); // JS Object
-			jsonData['settings'] = {"start" : start, "end": end};
+			jsonData['settings'] = {"userID" : args[1], "start" : start, "end": end, };
 			jsonData = JSON.stringify(jsonData, null, '\t'); // JSON indented
 		});
 
