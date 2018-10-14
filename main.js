@@ -3,10 +3,11 @@
 	**	Settings
 	*/
 	var webPage = require('webpage');
+	var fileSystem = require('fs');
 	var system = require('system');
 	var args = system.args;
 	var page = webPage.create();
-	page.settings.userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36';
+	page.settings.userAgent = 'Mozilla/5.0 (Windows NT 5.1; rv:13.0) Gecko/20100101 Firefox/13.0.1';
 	page.settings.javascriptEnabled = true;
 	page.settings.loadImages = false; // Script is much faster with this field set to false
 	phantom.cookiesEnabled = true;
@@ -20,7 +21,8 @@
 	var convertDate = function(dateString) {
 		var dateSplit = dateString.split('-');
 		var dateObj = new Date();
-		dateObj.setFullYear(parseInt(dateSplit[0]), parseInt(dateSplit[1])-1, parseInt(dateSplit[2])); // js month start from 0 to 11
+		// js month start from 0 to 11
+		dateObj.setFullYear(parseInt(dateSplit[0]), parseInt(dateSplit[1])-1, parseInt(dateSplit[2]));
 		dateObj.setHours(0, 0, 0, 0);
 		return (+ dateObj); // return the date in timestamp
 	};
@@ -141,8 +143,7 @@
 				console.log('Erreur : Données de retour vide (problème de dates ?)');
 				phantom.exit();
 			} else {
-				var fs = require('fs');
-				fs.write('response.json', jsonData, 'w');
+				fileSystem.write('response.json', jsonData, 'w');
 				console.log("Test complete");
 				phantom.exit();
 			}
