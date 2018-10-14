@@ -79,7 +79,7 @@
 	var aurionScheduleAccess = function() {
 		console.log('Step 3 - Click on the schedule button');
 		page.evaluate(function(){
-			var scheduleButton = $('a:contains("Mon Planning")');
+			var scheduleButton = $('a:contains("Mon planning")');
 			scheduleButton.click(); 
 		});
 		page.onLoadFinished = function() {
